@@ -3,7 +3,7 @@
 pub enum Informational{
     Continue,
     SwitchingProtocols,
-    Processing,
+    EarlyHints,
 }
 #[derive(Debug)]
 pub enum Success{
@@ -75,17 +75,25 @@ pub enum ServerError{
 }
 //http status code formatter
 pub struct Status{
-code: String,
-text: String,
+pub code: String,
+pub text: String,
 }
 ///This Trait returns the http code and text
-pub trait format{
-    pub fn format(self)->Status;
+pub trait Format{
+    pub fn get(self)->Status;
 }
-impl format for Informational{
- fn format(self)->Status{
+/** Informational */
+impl Format for Informational{
+ fn get(self)->Status{
     match self{
-        
+     Informational::Continue => Status{code:"100".to_string(),
+     text:"Continue".to_string()},
+     Informational::SwitchingProtocols => Status{code:"101".to_string(),
+     text:"Switching Protocols".to_string()},
+     Informational::EarlyHints=> Status{code:"102".to_string(),
+     text:"Early Hints".to_string()},  
     }
  }
 }
+/**Success message */
+
