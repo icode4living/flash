@@ -1,9 +1,14 @@
-/**HTTP status code */
-#[derive(Debug)]
+
+
+//HTTP status code 
+#[derive(Debug,PartialEq)]
 pub enum Informational{
+
+
     Continue,
     SwitchingProtocols,
     EarlyHints,
+
 }
 #[derive(Debug)]
 pub enum Success{
@@ -74,17 +79,30 @@ pub enum ServerError{
     NetworkConnectTimeoutError,
 }
 //http status code formatter
+#[derive(Debug)]
 pub struct Status{
 pub code: String,
 pub text: String,
 }
-///This Trait returns the http code and text
 pub trait Format{
-    pub fn get(self)->Status;
+    fn set(self)->Status;
 }
-/** Informational */
+//Generate status code for Informational response
 impl Format for Informational{
- fn get(self)->Status{
+    /// # Generate status code and text for **[HTTP Informational responses](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#information_responses)**
+    /// The status enums implements the trait set to generate http standard status code and text.
+    ///
+    /// ##Example
+  /// ```
+///  use flashweb::utils::status::*;
+/// 
+///  
+ /// let continue_status = Informational::Continue.set();
+ /// assert_eq!(continue_status.code, "100");
+ /// assert_eq!(continue_status.text, "Continue");
+ /// ```  
+  fn set(self)->Status{
+    
     match self{
      Informational::Continue => Status{code:"100".to_string(),
      text:"Continue".to_string()},
@@ -95,5 +113,32 @@ impl Format for Informational{
     }
  }
 }
-/**Success message */
-
+//HTTP Success response code
+impl Format for Success {
+     /// # Generate status code and text for **[HTTP Successessful responses](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#successful_responses)**
+    /// The status enums implements the trait set to generate http standard status code and text.
+    ///
+    /// ##Example
+  /// ```
+///  use flashweb::utils::status::*;
+///  
+ /// let success_status = Success::Ok.set();
+ /// assert_eq!(success_status .code, "200");
+ /// assert_eq!(success_status .text, "OK");
+ /// ``` 
+    fn set(self)->Status {
+        match self {
+            Self::Accepted => Status { code: "202".to_string(), text: "Accepted".to_string()},
+            Self::AlreadyReported =>Status { code: "208".to_string(), text:"Already Reported".to_string()},
+            Self::Created => Status { code: "201".to_string(), text: "Created".to_string()},
+            Self::ImUsed => Status { code: "226".to_string(), text: "IM used".to_string() },
+            Self::MultiStatus => Status { code: "207".to_string(), text: "Multi-Status".to_string() },
+            Self::NoContent => Status { code: "204".to_string(), text: "No Content" .to_string()},
+            Self::NonAuthoritativeInformation => Status { code: "203".to_string(), 
+            text: "Non-Authoritative Information".to_string()},
+            Self::Ok => Status { code: "200".to_string(), text: "OK".to_string() },
+            Self::PartialContent => Status {code: "206".to_string(), text:"Partial Content".to_string()},
+            Self::ResetContent => Status { code: "205".to_string(), text: "Reset Content".to_string() },
+        }
+    }
+}
