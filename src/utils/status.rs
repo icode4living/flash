@@ -1,5 +1,5 @@
 /**HTTP status code */
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Informational{
     Continue,
     SwitchingProtocols,
