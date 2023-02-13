@@ -2,26 +2,32 @@
 
 Let's take a calculator project for example,
 the Cargo.toml file looks like this.
-```
+
+```toml
 [package]
 name = "blog"
 version = "0.1.0"
 edition = "2021"
 ```
+
 And the project folder appears like this
 calculator
-|__src
-    |__main.rs
-    |__utils.rs
-    |__utils
-        |__post.rs
-when documenting in rust, crates, modules, enums, structs and functions should be,
-treated as external package not as crate root.
+&#124;__src
+    &#124;__main.rs
+    &#124;__utils.rs
+    &#124;__utils
+        &#124;__post.rs
+>when documenting in rust, crates, modules, enums, structs and functions should be,
+>treated as external package not as crate root by following this format
+> **use project_name::crate::module**
 >utils.rs looks like this
-> ```
->   pub mod post;
->```
+
+```rust
+ pub mod post;
+
     ```
+
+    ```rust
     //operator.rs
     pub struct Author{
     /// # Example snipet to display Author details
