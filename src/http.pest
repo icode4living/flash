@@ -1,0 +1,25 @@
+method = {"GET"|"POST" |"PUT"|"HEAD"|"DELETE"}
+WHITESPACE = _{" " | "\r" | "\n"}
+char = {ASCII_ALPHANUMERIC |"." |"-"|"_"|"&"}
+request_target = {"/" | ("/"~ char)+}
+/*form query
+eg. https://example.com/path/to/page?name=ferret&color=purple
+ */
+form_field = { char }
+form_value = {char+ }
+form_query = {request_target ~ "?"~(form_field ~"="~ form_value)~("&"~ form_field ~"="form_value)*}
+/*
+HTTP field line e.g Content-Type: text/plain 
+*/
+field = char
+value = char
+field_line = {field ~ ":" ~ value}
+http_version = {"HTTP/1.1"|"HTTP/2.0"}
+request_line = {(method ~ " " ~ request_target ~ " "~ http_version)|(method ~ " " ~ form_query ~ " "~ http_version)}
+message_body={}
+http = {
+    SOI ~
+    (request_line ~ NEWLINE ) ~ (field_line ~ NEWLINE)* ~
+    ANY
+    EOI
+}
