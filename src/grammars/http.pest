@@ -17,4 +17,4 @@ header = {header_name ~ ":" ~ whitespace ~ header_value
 header_name = {(!(NEWLINE | ":")~ ANY)+}
 header_value = {(!NEWLINE ~ ANY)+}
 
-delimiter = { aNEWLINE+ }
+delimiter = { NEWLINE+ }
