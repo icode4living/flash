@@ -1,4 +1,5 @@
 GET /example.html HTTP/1.1
 Cookie: name="id"
+AUTH-Token: 22222
 
 

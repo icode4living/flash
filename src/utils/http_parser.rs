@@ -15,9 +15,9 @@ pub struct HTTPParser;
 
 pub fn store_http(item: String)->HashMap<String,HashMap<String,String>>{
   let mut my_value:HashMap<String,HashMap<String,String>> = HashMap::new();
+  let req =  my_value.entry("request".to_owned()).or_default();
 
- // my_value.insert("test", "test");
-   //let mut req = "";
+ 
 
     let item = HTTPParser::parse(Rule::http, &item)
     .expect("unsuccessful parse")
@@ -26,19 +26,21 @@ pub fn store_http(item: String)->HashMap<String,HashMap<String,String>>{
       match line.as_rule(){
         Rule::request=>{
           let mut inner_rules = line.into_inner();
-        //  req = inner_rules.next().unwrap().as_str();
-          let nvalue = my_value.entry("request".to_owned()).or_default();
-         nvalue.insert("method".to_owned(), inner_rules.next().unwrap().as_str().to_owned());
-          nvalue.insert("path".to_owned(), inner_rules.next().unwrap().as_str().to_owned());
-          nvalue.insert("version".to_owned(), inner_rules.next().unwrap().as_str().to_owned());
-          nvalue.insert("cookie".to_owned(), inner_rules.next().unwrap().as_str().to_owned());
+          req.insert("method".to_owned(), inner_rules.next().unwrap().as_str().to_owned());
+          req.insert("path".to_owned(), inner_rules.next().unwrap().as_str().to_owned());
+          req.insert("version".to_owned(), inner_rules.next().unwrap().as_str().to_owned());
+         
+         for nline in inner_rules{
+            let mut inner_rule = nline.into_inner();
+            let name = inner_rule.next().unwrap().as_str().to_owned();
+            let val = inner_rule.next().unwrap().as_str().to_owned();
 
-
-         //my_value.insert("method".to_owned(), method.to_owned());
+            req.insert(name, val);
+         }
 
         }
         Rule::request_line=>{
-        
+       
         }
         Rule::uri=>{
 
@@ -53,6 +55,7 @@ pub fn store_http(item: String)->HashMap<String,HashMap<String,String>>{
 
         }
         Rule::headers=>{
+           
 
         }
         Rule::header=>{
