@@ -4,8 +4,8 @@ request = {
     headers? ~
     NEWLINE
 }
-request_line = _{method ~ " "+ ~ uri ~ " " + ~ "HTTP/" ~
-    version ~ NEWLINE}
+request_line = _{method ~ " "+ ~ uri ~ " " + ~ ("HTTP/" ~
+    version)? ~ NEWLINE}
 uri = {(!whitespace ~ ANY)+}
 method ={("GET" | "DELETE" | "HEAD" | "POST" | "PUT")}
 version = {(ASCII_DIGIT | ".")+}
