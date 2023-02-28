@@ -1,5 +1,10 @@
-GET /example.html HTTP/1.1
-Cookie: name="id"
-AUTH-Token: 22222
+GET /hello HTTP/1.1
+authorization: token
 
+###
 
+POST https://rq-rust.free.beeceptor.com/api HTTP/1.1
+
+{
+  "hello": "hola"
+}

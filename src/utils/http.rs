@@ -1,8 +1,8 @@
 /*HTTP header parser checks if the request header matches the 
 http specification
  */
-use std::{fs, collections::{HashMap, hash_map::RandomState}, hash::Hash, fmt::format};
-extern crate pest;
+//use std::{fs, collections::{HashMap, hash_map::RandomState}, hash::Hash, fmt::format};
+/*extern crate pest;
 //#[macro_use]
 use pest_derive::Parser;
 
@@ -13,8 +13,20 @@ use pest::{Parser, iterators::Pair};
 pub struct HttpParser;
 
 //This enum represents the the http method
-#[derive(Debug)]
-pub enum HttpMethod {
+#[derive(Debug)]*/
+
+extern crate pest;
+//#[macro_use]
+use pest_derive::Parser;
+
+//extern crate pest_derive;
+
+use pest::Parser;
+
+#[derive(Parser)]
+#[grammar = "grammars/http.pest"]
+struct HttpParser;
+/*pub enum HttpMethod {
     GET,
     POST,
     PUT,
@@ -31,74 +43,78 @@ pub version: String,
 pub headers:HashMap<String, String>,
 
 }
+*/
+pub fn parse_http(input: String){
+    let parse_file = HttpParser::parse(Rule::file, &input)
+    .unwrap().next().unwrap();
 
-pub fn parse_http(input: String)->Http{
-    let file = HttpParser::parse(Rule::http, &input)
-    .expect("unssuccessful parse").next().unwrap();
-    let mut header: HashMap<String, String> = HashMap::new();
- // let h = header.entry("".to_string()).or_default();
-  //header.insert("k".to_string(), "".to_string());
-    let mut result = Http{method:"".to_string(), 
-    uri: "".to_string(), version:"".to_string(),headers: header};
-   // println!("{:#?}", file.into_inner());
-    for line in file.into_inner(){
+   // .expect("can not parse file")
+for p in parse_file.into_inner(){
+   // println!("{:#?}",p.into_inner())
+    
+match p.as_rule() {
+    Rule::request=>{
 
-        match line.as_rule(){
-            Rule::request=>{
-                let mut inner_r = line.into_inner();
-                result.method = inner_r.next().unwrap().as_str().to_string();
-
-                result.uri =inner_r.next().unwrap().as_str().to_string();
-                result.version =inner_r.next().unwrap().as_str().to_string();
-                let header_name = inner_r.next().unwrap().as_str();
-                let header_val = inner_r.next().unwrap().as_str();
-           //let h =   head.insert(header_name.to_string(), header_val.to_string());
-              header.insert(header_name.to_string(), header_val.to_string());
-
-
-            },
-            Rule::EOI=>(),
-            Rule::delimiter=>(),
-            Rule::header=>(),
-            Rule::header_name=>(),
-            Rule::header_value=>(),
-            Rule::headers=>{
-    
-            },
-            
-            Rule::request_line=>{
-    
-            },
-            Rule::method=>{
-               let mut inner_rule = line.into_inner();
-             // let nmethod = inner_rule.next().unwrap().as_str();
-               result.method = inner_rule.next().unwrap().as_str().to_string();
-    
-            },
-            Rule::uri=>{
-    
-            },
-            Rule::version=>{
-    
-            },
-            Rule::http=>{
-    
-            },
-            Rule::whitespace=>(),
-    
-    
-        }
+    },
+    Rule::method=>{
+let mut t = p.into_inner();
+println!("{:#?}",t.next().unwrap().as_str())
+    },
+    Rule::uri=>{
+        let mut t = p.into_inner();
+        println!("{:#?}",t.next().unwrap().as_str())
+    },
+    Rule::header=>{
+        let mut t = p.into_inner();
+        println!("{:#?}",t.next().unwrap().as_str())
+    },
+    Rule::header_name=>{
+        let mut t = p.into_inner();
+        println!("{:#?}",t.next().unwrap().as_str())
+    },
+    Rule::header_value=>{
+        let mut t = p.into_inner();
+        println!("{:#?}",t.next().unwrap().as_str())
+    },
+    Rule::version=>{
+        let mut t = p.into_inner();
+        println!("{:#?}",t.next().unwrap().as_str())
     }
-
-   //Http { method: line.into_inner()., uri: (), version: (), headers: () }
-   //println!("{:#?}", line);
-
-   result
-   
-   }
+    Rule::body=>{
+        let mut t = p.into_inner();
+        println!("{:#?}",t.next().unwrap().as_str())
+    },
+    Rule::EOI=>{
+       
+    },
+    Rule::delimiter=>{
+      
+    },
+    Rule::file=>{
+        let mut t = p.into_inner();
+        println!("file: {:#?}",t.next().unwrap().as_str())
+    },
+    Rule::whitespace=>{
+        let mut t = p.into_inner();
+        println!("{:#?}",t.next().unwrap().as_str())
+    },
+    Rule::headers=>{
+        let mut t = p.into_inner();
+        println!("{:#?}",t.next().unwrap().as_str())
+    },
+    Rule::request_line=>{
+        let mut t = p.into_inner();
+        println!("{:#?}",t.next().unwrap().as_str())
+    }
     
+}
+}
 
 
 
-   // println!("{:#?}", file);
+//println!("{:#?}", file);
+
+
+}
+   
 
