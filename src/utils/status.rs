@@ -102,7 +102,7 @@ pub trait Format<'a>
 where 'a: 'static
 {
     
-    fn set(self)->Status<'a>;
+    fn set(self)->Status<'static>;
 }
 //Generate status code for Informational response
 impl Format<'static> for Informational

@@ -1,120 +1,46 @@
-/*HTTP header parser checks if the request header matches the 
-http specification
- */
-//use std::{fs, collections::{HashMap, hash_map::RandomState}, hash::Hash, fmt::format};
-/*extern crate pest;
-//#[macro_use]
-use pest_derive::Parser;
-
-use pest::{Parser, iterators::Pair};
-//use pest::iterators::Pair;
-#[derive(Parser)]
-#[grammar = "grammars/http.pest"]
-pub struct HttpParser;
-
-//This enum represents the the http method
-#[derive(Debug)]*/
-
-extern crate pest;
-//#[macro_use]
-use pest_derive::Parser;
-
-//extern crate pest_derive;
-
-use pest::Parser;
-
-#[derive(Parser)]
-#[grammar = "grammars/http.pest"]
-struct HttpParser;
-/*pub enum HttpMethod {
-    GET,
-    POST,
-    PUT,
-    DELETE,
-    HEAD,
-    OPTIIONS,
+//HTTP methods
+#[derive(Debug, PartialEq, Eq)]
+pub enum Method{
+GET,
+POST,
+PUT,
+DELETE,
+HEAD,
+CONNECT,
+OPTIONS,
+TRACE,
 }
-// the http header and request line data representation
+//Header e.g Content-Type: text/html
 #[derive(Debug)]
-pub struct Http{
-pub method: String,
-pub uri: String,
-pub version: String,
-pub headers:HashMap<String, String>,
-
+pub enum Header{
+Token(&'static str),
+Value (&'static str),
 }
+//URI parameters e.g ?key1=value&key2=value
+#[derive(Debug)]
+pub enum Params{
+    Key(&'static str),
+    Value(&'static str)
+}
+#[derive(Debug)]
+pub struct URI{
+pub path: &'static str,
+pub param:Option<Vec<Params>>,
+}
+#[derive(Debug)]
+/*Request line according to RFC 9110 standard
+method path version
+
 */
-pub fn parse_http(input: String){
-    let parse_file = HttpParser::parse(Rule::file, &input)
-    .unwrap().next().unwrap();
-
-   // .expect("can not parse file")
-for p in parse_file.into_inner(){
-   // println!("{:#?}",p.into_inner())
-    
-match p.as_rule() {
-    Rule::request=>{
-
-    },
-    Rule::method=>{
-let mut t = p.into_inner();
-println!("{:#?}",t.next().unwrap().as_str())
-    },
-    Rule::uri=>{
-        let mut t = p.into_inner();
-        println!("{:#?}",t.next().unwrap().as_str())
-    },
-    Rule::header=>{
-        let mut t = p.into_inner();
-        println!("{:#?}",t.next().unwrap().as_str())
-    },
-    Rule::header_name=>{
-        let mut t = p.into_inner();
-        println!("{:#?}",t.next().unwrap().as_str())
-    },
-    Rule::header_value=>{
-        let mut t = p.into_inner();
-        println!("{:#?}",t.next().unwrap().as_str())
-    },
-    Rule::version=>{
-        let mut t = p.into_inner();
-        println!("{:#?}",t.next().unwrap().as_str())
-    }
-    Rule::body=>{
-        let mut t = p.into_inner();
-        println!("{:#?}",t.next().unwrap().as_str())
-    },
-    Rule::EOI=>{
-       
-    },
-    Rule::delimiter=>{
-      
-    },
-    Rule::file=>{
-        let mut t = p.into_inner();
-        println!("file: {:#?}",t.next().unwrap().as_str())
-    },
-    Rule::whitespace=>{
-        let mut t = p.into_inner();
-        println!("{:#?}",t.next().unwrap().as_str())
-    },
-    Rule::headers=>{
-        let mut t = p.into_inner();
-        println!("{:#?}",t.next().unwrap().as_str())
-    },
-    Rule::request_line=>{
-        let mut t = p.into_inner();
-        println!("{:#?}",t.next().unwrap().as_str())
-    }
-    
+pub struct RequestLine{
+    pub method: Method,
+    pub url : URI,
+    pub version: Option< &'static str>
 }
+//HTTP Request header representation according to RFC 9110 standard
+#[derive(Debug)]
+pub struct Request{
+    pub request_line: RequestLine,
+    pub header: Option<Vec<Header>>,
+    pub body: Option<& 'static str>
 }
-
-
-
-//println!("{:#?}", file);
-
-
-}
-   
-
