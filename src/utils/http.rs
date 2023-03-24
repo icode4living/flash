@@ -1,5 +1,5 @@
 use std::{collections::HashMap};
-use nom::{ InputTakeAtPosition, sequence::tuple, multi::*,
+use nom::{ InputTakeAtPosition, sequence::{tuple, terminated}, multi::*, combinator::*,
 IResult, error::{VerboseError, context, ErrorKind}, bytes::streaming::*,
 branch::alt, AsChar
 };
@@ -39,7 +39,12 @@ pub type Header = HashMap<&'static str, & 'static str>;
 pub type Param<'a> = (&'a str, &'a str); 
 pub type Params<'a> = Vec<Param<'a>>;
 pub type Path<'a> = Vec<&'a str>;
-pub type URI <'a> = (Path<'a>, Option<Vec<Params<'a>>>);
+//pub type URI <'a> = (Path<'a>, Option<Vec<Params<'a>>>);
+#[derive(Debug,PartialEq, Eq)]
+pub struct URI<'a>{
+   pub path: Path<'a>,
+   pub query: Option<Params<'a>>
+}
 #[derive(Debug)]
 /*Request line according to RFC 9110 standard
 method path version
@@ -126,20 +131,37 @@ pub fn query_params(input:&str)->Res<&str, Params>{
 /**TODO test path */
 pub fn path(input: &str)->Res<&str, Path>{
     context("path", 
-    tuple((
-        tag("/"),
-        many0(tuple((
-            tag("/"),
-            url_format,
-        ))
-    ))
-    ))(input)
-    .map(|(next_input,res)|{
-        let mut ps = Vec::new();
-        for p in res.1{
-            ps.push(p.1);
+    
+tuple((tag("/"),
+many0(terminated(url_format, tag("/"))),
+opt(url_format)
+))
+)(input)
+    .map(|(next_input, res)|{
+        let mut paths = Vec::new();
+        if let Some(last) = res.2{
+            paths.push(last);
         }
-        (next_input, ps)
+        (next_input,paths)   
     })
+    
+}
+
+//parse URI
+/** example/hello?foo=bar&jhone=doe */
+pub fn uri(input: &str)->Res<&str, URI>{
+   context(
+    "uri",
+tuple((path, opt(query_params))),
+   )(input)
+   .map(|(next_input,res)|{
+    let (p, query_p) = res;
+    (next_input,
+    URI{
+        path:p,
+        query:query_p,
+    })
+   }
+)
     
 }
